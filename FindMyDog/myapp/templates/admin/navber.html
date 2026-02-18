@@ -1,0 +1,149 @@
+<aside class="flex flex-col w-72 h-screen bg-white border-r border-gray-200 shadow-sm" 
+       x-data="{ 
+            activeSection: 'dashboard-overview',
+            openMenus: {
+                aiManagement: true,
+                scheduler: false,
+                performance: false
+            }
+       }">
+    
+    <div class="p-6">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-blue-600 rounded-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-gray-900 leading-tight">Find My Dog</h1>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Admin Control</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="flex-1 px-4 pb-4 space-y-2 overflow-y-auto custom-scrollbar">
+        
+        <div class="space-y-1">
+            <button @click="openMenus.aiManagement = !openMenus.aiManagement" 
+                    class="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold text-gray-700 transition-all rounded-xl hover:bg-gray-100 group">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>AI Management</span>
+                </div>
+                <svg class="w-4 h-4 transition-transform duration-200" :class="openMenus.aiManagement ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div x-show="openMenus.aiManagement" x-collapse class="pl-10 space-y-1">
+                <a href="{% url 'admin_page' %}" 
+                   @click="activeSection = 'auto-train'"
+                   :class="activeSection === 'auto-train' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900'"
+                   class="block px-4 py-2 text-sm font-medium transition-colors rounded-lg">
+                   Dashboard Overview
+                </a>
+            </div>
+        </div>
+
+        <div class="space-y-1">
+            <button @click="openMenus.scheduler = !openMenus.scheduler" 
+                    class="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold text-gray-700 transition-all rounded-xl hover:bg-gray-100 group">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Training Scheduler</span>
+                </div>
+                <svg class="w-4 h-4 transition-transform duration-200" :class="openMenus.scheduler ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div x-show="openMenus.scheduler" x-collapse class="pl-10 space-y-1">
+                <a href="{% url 'set_auto_training' %}" 
+                   @click="activeSection = 'auto-train'"
+                   :class="activeSection === 'auto-train' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900'"
+                   class="block px-4 py-2 text-sm font-medium transition-colors rounded-lg">
+                   Auto Training Schedule
+                </a>
+                <a href="{% url 'page_select_model' %}" 
+                    @click="activeSection = 'select model'"
+                    :class="activeSection === 'select model' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900'"
+                    class="block px-4 py-2 text-sm font-medium transition-colors rounded-lg">
+                    Select Model
+                </a>
+                
+            </div>
+        </div>
+
+        <div class="space-y-1">
+            <button @click="openMenus.performance = !openMenus.performance" 
+                    class="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold text-gray-700 transition-all rounded-xl hover:bg-gray-100 group">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span>Performance</span>
+                </div>
+                <svg class="w-4 h-4 transition-transform duration-200" :class="openMenus.performance ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div x-show="openMenus.performance" x-collapse class="pl-10 space-y-1">
+                <a href="{% url 'history_knn' %}" 
+                   @click="activeSection = 'test-knn'"
+                   :class="activeSection === 'test-knn' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900'"
+                   class="block px-4 py-2 text-sm font-medium transition-colors rounded-lg">
+                   history_KNN Test
+                </a>
+                <a href="{% url 'testEMBmodel' %}" 
+                   @click="activeSection = 'test-knn'"
+                   :class="activeSection === 'test-knn' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-900'"
+                   class="block px-4 py-2 text-sm font-medium transition-colors rounded-lg">
+                   Test KNN Accuracy
+                </a>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="p-4 bg-gray-50 border-t border-gray-200">
+        {% if user.is_authenticated %}
+        <div class="flex items-center p-2 space-x-3 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="flex items-center justify-center w-10 h-10 font-bold text-white bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-lg">
+                {{ user.username.0|upper|default:"A" }}
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-900 truncate">{{ user.username|default:"Administrator" }}</p>
+                <p class="text-xs text-green-600 font-medium">Online</p>
+            </div>
+            <button class="text-gray-400 hover:text-red-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</aside>
+
+<style>
+    /* ปรับแต่ง Scrollbar ให้ดู Minimal */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #E5E7EB;
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #D1D5DB;
+    }
+</style>

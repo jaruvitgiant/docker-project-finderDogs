@@ -1,0 +1,2 @@
+# ต้องเว้นบรรทัดสุดท้ายว่างๆ ไว้ 1 บรรทัดเสมอ
+*/1 * * * * /usr/local/bin/python /app/manage.py crontab run 8ce75e5f2042d392fa80d9c894f53995 >> /tmp/cron_debug.log 2>&1

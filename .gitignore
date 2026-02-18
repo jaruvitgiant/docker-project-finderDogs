@@ -1,0 +1,32 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+staticfiles/
+media/
+
+# Environment Variables (ความลับ)
+.env
+
+# Docker / Machine Learning
+models/*.joblib
+*.log
+venv/
+.DS_Store
+
+# ป้องกันไฟล์โมเดลขนาดใหญ่
+*.pt
+*.h5
+*.pth
+*.weights
+
+# ป้องกันโฟลเดอร์ที่สร้างอัตโนมัติ (ถ้ามี)
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+
+# ไฟล์ความลับ
+.env
+.env.docker

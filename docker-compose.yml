@@ -1,0 +1,142 @@
+version: '3.9'
+
+services:
+  # ====================================
+  # PostgreSQL Database
+  # ====================================
+  db:
+    image: postgres:16-alpine
+    container_name: findmydog_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_DB: ${DB_NAME:-findmydog}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-admin} -d ${DB_NAME:-findmydog}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - findmydog_network
+    restart: unless-stopped
+
+  # ====================================
+  # Redis Cache & Message Broker
+  # ====================================
+  redis:
+    image: redis:7-alpine
+    container_name: findmydog_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    networks:
+      - findmydog_network
+    restart: unless-stopped
+
+  # ====================================
+  # Django Web Application
+  # ====================================
+  web:
+    build:
+      context: ./FindMyDog
+      dockerfile: Dockerfile
+    container_name: findmydog_web
+    user: root
+    command: >
+      sh -c "
+      python manage.py crontab remove || true &&
+      python manage.py migrate &&
+      python manage.py crontab add &&
+      service cron restart &&
+      tail -f /tmp/cron_debug.log &
+      gunicorn --bind 0.0.0.0:8000 --workers 3 findmydog.wsgi:application
+      "
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=${DB_NAME:-findmydog}
+      - DB_USER=${DB_USER:-admin}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=findmydog.settings
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,web}
+      - DEBUG=${DEBUG:-false}
+      - SECRET_KEY=${SECRET_KEY:-changeme}
+      - AI_SERVICE_URL=http://ai:8000
+    volumes:
+      - ./media:/app/media
+      - ./staticfiles:/app/staticfiles
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - findmydog_network
+    restart: unless-stopped
+
+  # ====================================
+  # FastAPI AI Service (Face Recognition)
+  # ====================================
+  ai:
+    build:
+      context: ./api-modelfaceNetDog
+      dockerfile: Dockerfile
+    container_name: findmydog_ai
+    env_file:
+      - .env
+    environment:
+      - ALLOWED_ORIGINS=${ALLOWED_HOSTS:-*}
+    volumes:
+      - ./media:/app/media
+    ports:
+      - "8080:8000"
+    depends_on:
+      - web
+    networks:
+      - findmydog_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: findmydog_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    networks:
+      - findmydog_network
+    depends_on:
+      - db
+networks:
+  findmydog_network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:

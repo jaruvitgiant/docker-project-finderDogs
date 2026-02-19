@@ -8,7 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
-.env
+# .env
 
 # ยกเว้นไฟล์ model ขนาดใหญ่
 resnet/model/resne152-V01_100.pt

@@ -30,3 +30,4 @@ env/
 # ไฟล์ความลับ
 # .env
 .env.docker
+staticfiles/

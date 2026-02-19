@@ -6,7 +6,7 @@ staticfiles/
 media/
 
 # Environment Variables (ความลับ)
-.env
+# .env
 
 # Docker / Machine Learning
 models/*.joblib
@@ -28,5 +28,5 @@ venv/
 env/
 
 # ไฟล์ความลับ
-.env
+# .env
 .env.docker
